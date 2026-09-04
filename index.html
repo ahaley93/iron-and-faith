@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#101610" />
+  <meta name="description" content="A two-person faith-centered gym accountability tracker." />
+  <title>Iron & Faith</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <section id="setupScreen" class="screen center-screen hidden">
+      <div class="auth-card">
+        <div class="brand-lockup">
+          <div class="brand-mark">IF</div>
+          <div>
+            <h1>Iron &amp; Faith</h1>
+            <p>Gym accountability rooted in discipline, brotherhood, and faith.</p>
+          </div>
+        </div>
+        <div class="notice">
+          <strong>Setup needed.</strong>
+          <p>Add your Supabase Project URL and anon/public key to <code>config.js</code>. The included README walks you through it.</p>
+        </div>
+        <button id="demoBtn" class="btn btn-secondary full">Preview in demo mode</button>
+      </div>
+    </section>
+
+    <section id="authScreen" class="screen center-screen hidden">
+      <div class="auth-card">
+        <div class="brand-lockup">
+          <div class="brand-mark">IF</div>
+          <div>
+            <h1>Iron &amp; Faith</h1>
+            <p>Show up. Tell the truth. Build each other up.</p>
+          </div>
+        </div>
+
+        <div class="scripture-mini">
+          <span id="authVerseRef"></span>
+          <p id="authVerseText"></p>
+        </div>
+
+        <div class="segmented">
+          <button class="segment active" data-auth-tab="login">Log in</button>
+          <button class="segment" data-auth-tab="signup">Create account</button>
+        </div>
+
+        <form id="loginForm" class="stack">
+          <label>Email<input id="loginEmail" type="email" autocomplete="email" required /></label>
+          <label>Password<input id="loginPassword" type="password" autocomplete="current-password" minlength="6" required /></label>
+          <button class="btn btn-primary full" type="submit">Log in</button>
+        </form>
+
+        <form id="signupForm" class="stack hidden">
+          <label>Email<input id="signupEmail" type="email" autocomplete="email" required /></label>
+          <label>Password<input id="signupPassword" type="password" autocomplete="new-password" minlength="6" required /></label>
+          <button class="btn btn-primary full" type="submit">Create account</button>
+          <small class="muted">If email confirmation is enabled in Supabase, confirm your email before logging in.</small>
+        </form>
+      </div>
+    </section>
+
+    <section id="teamScreen" class="screen center-screen hidden">
+      <div class="auth-card">
+        <div class="eyebrow">One last step</div>
+        <h1>Connect your accountability team</h1>
+        <p class="muted">One of you creates the team. The other joins with the invite code.</p>
+
+        <div class="segmented">
+          <button class="segment active" data-team-tab="create">Create team</button>
+          <button class="segment" data-team-tab="join">Join team</button>
+        </div>
+
+        <form id="createTeamForm" class="stack">
+          <label>Your display name<input id="createDisplayName" required maxlength="30" placeholder="Your name" /></label>
+          <label>Team name<input id="teamName" required maxlength="50" value="Iron Sharpens Iron" /></label>
+          <button class="btn btn-primary full" type="submit">Create team</button>
+        </form>
+
+        <form id="joinTeamForm" class="stack hidden">
+          <label>Your display name<input id="joinDisplayName" required maxlength="30" placeholder="Vaughn" /></label>
+          <label>Invite code<input id="inviteCode" required maxlength="12" autocapitalize="characters" placeholder="AB12CD34" /></label>
+          <button class="btn btn-primary full" type="submit">Join team</button>
+        </form>
+
+        <button id="teamLogoutBtn" class="btn btn-ghost full">Log out</button>
+      </div>
+    </section>
+
+    <section id="mainScreen" class="screen hidden">
+      <header class="topbar">
+        <div class="brand-inline">
+          <div class="brand-mark small">IF</div>
+          <div>
+            <strong id="appName">Iron &amp; Faith</strong>
+            <span id="teamNameLabel">Accountability</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="installBtn" class="icon-btn hidden" title="Install app">＋</button>
+          <button id="logoutBtn" class="avatar-btn" title="Log out">↪</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <section id="todayTab" class="tab-page active">
+          <div class="hero-grid">
+            <article class="scripture-card card">
+              <div class="eyebrow light">Daily Scripture</div>
+              <h2 id="verseRef"></h2>
+              <blockquote id="verseText"></blockquote>
+              <div class="card-footer">
+                <span>World English Bible</span>
+                <button id="copyVerseBtn" class="text-btn">Copy</button>
+              </div>
+            </article>
+
+            <article class="card welcome-card">
+              <div>
+                <div class="eyebrow">This week</div>
+                <h2 id="weekRange"></h2>
+                <p id="welcomeLine" class="muted"></p>
+              </div>
+              <div id="teamPulse" class="team-pulse"></div>
+            </article>
+          </div>
+
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Today</div>
+                <h2>Daily check-in</h2>
+              </div>
+              <span id="todayDate" class="date-chip"></span>
+            </div>
+
+            <form id="dailyForm" class="card form-card">
+              <div class="toggle-grid">
+                <label class="check-tile"><input id="workoutDone" type="checkbox" /><span><b>Workout</b><small>Training completed</small></span></label>
+                <label class="check-tile"><input id="nutritionOnTrack" type="checkbox" /><span><b>Nutrition</b><small>Stayed on plan</small></span></label>
+                <label class="check-tile"><input id="prayerDone" type="checkbox" /><span><b>Prayer / Scripture</b><small>Time with God</small></span></label>
+                <label class="check-tile"><input id="mobilityDone" type="checkbox" /><span><b>Mobility</b><small>Stretching / rehab</small></span></label>
+              </div>
+
+              <div class="field-grid">
+                <label>Water (oz)<input id="waterOz" type="number" min="0" max="300" step="1" placeholder="80" /></label>
+                <label>Steps<input id="steps" type="number" min="0" max="100000" step="100" placeholder="8000" /></label>
+                <label>Sleep (hours)<input id="sleepHours" type="number" min="0" max="24" step="0.25" placeholder="7.5" /></label>
+                <label>Energy (1–5)
+                  <select id="energy"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+                </label>
+              </div>
+
+              <label>One-line reflection<textarea id="dailyNote" rows="2" maxlength="300" placeholder="What went well, or what needs to change tomorrow?"></textarea></label>
+              <button class="btn btn-primary" type="submit">Save today’s check-in</button>
+            </form>
+          </section>
+
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Accountability</div>
+                <h2>Team pulse</h2>
+              </div>
+            </div>
+            <div id="memberCards" class="member-grid"></div>
+          </section>
+        </section>
+
+        <section id="weekTab" class="tab-page">
+          <section class="section no-top">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Weekly review</div>
+                <h1>Measure the trend, not one day</h1>
+              </div>
+            </div>
+
+            <form id="weeklyForm" class="card form-card">
+              <div class="field-grid">
+                <label>Weight (lb)<input id="weight" type="number" min="0" max="1000" step="0.1" placeholder="Optional" /></label>
+                <label>Body fat (%)<input id="bodyFat" type="number" min="0" max="100" step="0.1" placeholder="Optional" /></label>
+                <label>Waist (in)<input id="waist" type="number" min="0" max="100" step="0.1" placeholder="Optional" /></label>
+                <label>Training sessions<input id="trainingSessions" type="number" min="0" max="14" step="1" placeholder="Optional" /></label>
+              </div>
+              <label>Win of the week<textarea id="weeklyWin" rows="2" maxlength="300" placeholder="PR, consistency win, better food choice, more energy…"></textarea></label>
+              <label>Next week’s commitment<textarea id="weeklyCommitment" rows="2" maxlength="300" placeholder="One specific promise you want your partner to hold you to."></textarea></label>
+              <button class="btn btn-primary" type="submit">Save weekly review</button>
+            </form>
+          </section>
+
+          <section class="section">
+            <div class="section-heading split">
+              <div>
+                <div class="eyebrow">Trend</div>
+                <h2>Weekly progress</h2>
+              </div>
+              <select id="chartMetric" class="compact-select">
+                <option value="weight">Weight</option>
+                <option value="body_fat">Body fat</option>
+                <option value="waist">Waist</option>
+              </select>
+            </div>
+            <div class="card chart-card">
+              <div id="chartLegend" class="chart-legend"></div>
+              <div id="progressChart" class="chart-wrap"></div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">History</div>
+                <h2>Recent reviews</h2>
+              </div>
+            </div>
+            <div id="weeklyHistory" class="history-list"></div>
+          </section>
+        </section>
+
+        <section id="goalsTab" class="tab-page">
+          <section class="section no-top">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Targets</div>
+                <h1>Goals worth being held to</h1>
+              </div>
+            </div>
+
+            <form id="goalForm" class="card form-card">
+              <div class="field-grid">
+                <label>Metric
+                  <select id="goalMetric" required>
+                    <option value="Weight">Weight</option>
+                    <option value="Body Fat">Body Fat</option>
+                    <option value="Waist">Waist</option>
+                    <option value="Workouts / Week">Workouts / Week</option>
+                    <option value="Steps / Day">Steps / Day</option>
+                    <option value="Custom">Custom</option>
+                  </select>
+                </label>
+                <label>Target<input id="goalTarget" required type="number" step="0.1" /></label>
+                <label>Unit<input id="goalUnit" required maxlength="20" placeholder="lb, %, in, sessions..." /></label>
+                <label>Target date<input id="goalDate" type="date" /></label>
+              </div>
+              <label>Why this matters<textarea id="goalWhy" maxlength="300" rows="2" placeholder="Give the goal a reason bigger than the number."></textarea></label>
+              <button class="btn btn-primary" type="submit">Add goal</button>
+            </form>
+          </section>
+          <section class="section">
+            <div id="goalsList" class="goal-grid"></div>
+          </section>
+        </section>
+
+        <section id="encourageTab" class="tab-page">
+          <section class="section no-top">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Brotherhood</div>
+                <h1>Encourage. Challenge. Repeat.</h1>
+              </div>
+            </div>
+
+            <form id="encouragementForm" class="card form-card">
+              <label>Send to<select id="encourageTo"></select></label>
+              <label>Message<textarea id="encourageMessage" rows="3" maxlength="400" placeholder="Proud of you for getting the work in. Tomorrow, we go again."></textarea></label>
+              <button class="btn btn-primary" type="submit">Send encouragement</button>
+            </form>
+          </section>
+
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Feed</div>
+                <h2>Accountability notes</h2>
+              </div>
+            </div>
+            <div id="encouragementFeed" class="feed"></div>
+          </section>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Primary">
+        <button class="nav-item active" data-tab="today"><span>●</span><b>Today</b></button>
+        <button class="nav-item" data-tab="week"><span>↗</span><b>Week</b></button>
+        <button class="nav-item" data-tab="goals"><span>◎</span><b>Goals</b></button>
+        <button class="nav-item" data-tab="encourage"><span>✦</span><b>Encourage</b></button>
+      </nav>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
