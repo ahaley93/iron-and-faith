@@ -10,6 +10,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="invite-fix.css" />
+  <link rel="stylesheet" href="workout-log.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -174,9 +175,33 @@
                 </label>
               </div>
 
+              <div class="workout-entry">
+                <div>
+                  <div class="eyebrow">Gym log</div>
+                  <h3>What did you lift today?</h3>
+                  <p class="muted">Type your exercises, sets, reps, and weight. This is visible to your accountability partner.</p>
+                </div>
+                <label>Today's workout
+                  <textarea id="workoutDetails" rows="7" maxlength="2000" placeholder="Bench press — 3 x 8 @ 185 lb&#10;Incline dumbbell press — 3 x 10 @ 60 lb&#10;Cable fly — 3 x 12 @ 30 lb"></textarea>
+                </label>
+                <small class="muted">Your workout log is saved with your daily check-in.</small>
+              </div>
+
               <label>One-line reflection<textarea id="dailyNote" rows="2" maxlength="300" placeholder="What went well, or what needs to change tomorrow?"></textarea></label>
               <button class="btn btn-primary" type="submit">Save today’s check-in</button>
             </form>
+          </section>
+
+          <section class="section">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow">Today's training</div>
+                <h2>Workout logs</h2>
+              </div>
+            </div>
+            <div id="todayWorkoutFeed" class="workout-feed">
+              <div class="card form-card muted">Workout logs will appear here after you save a daily check-in.</div>
+            </div>
           </section>
 
           <section class="section">
@@ -316,5 +341,6 @@
   <script src="config.js"></script>
   <script src="app.js"></script>
   <script src="invite-fix.js"></script>
+  <script src="workout-log.js"></script>
 </body>
 </html>
