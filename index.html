@@ -9,6 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="invite-fix.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -130,6 +131,22 @@
               <div id="teamPulse" class="team-pulse"></div>
             </article>
           </div>
+
+          <article id="teamInviteCard" class="card team-invite-card hidden" aria-live="polite">
+            <div class="team-invite-copy">
+              <div class="eyebrow">Your team</div>
+              <h2 id="teamInviteName">Accountability team</h2>
+              <p class="muted">Share this code with your accountability partner so they can join your team.</p>
+            </div>
+            <div class="invite-code-block">
+              <span class="invite-label">Invite code</span>
+              <code id="teamInviteCode" class="invite-code">—</code>
+              <div class="invite-actions">
+                <button id="copyInviteBtn" class="btn btn-primary" type="button">Copy code</button>
+                <button id="shareInviteBtn" class="btn btn-secondary" type="button">Share invite</button>
+              </div>
+            </div>
+          </article>
 
           <section class="section">
             <div class="section-heading">
@@ -298,5 +315,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="invite-fix.js"></script>
 </body>
 </html>
